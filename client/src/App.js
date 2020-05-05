@@ -6,7 +6,7 @@ const App = () => {
   return (
     <div className="App">
       <header className="App-header">
-      <h1>Search musical title from API SPOTIFY</h1>
+      <h1>Searchbar connect to API SPOTIFY</h1>
       </header>
     <Search />
     </div>
