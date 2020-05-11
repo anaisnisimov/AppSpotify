@@ -16,5 +16,6 @@
   "bugs": {
     "url": "https://github.com/anaisnisimov/AppSpotify/issues"
   },
-  "homepage": "https://github.com/anaisnisimov/AppSpotify#readme"
+  "homepage": "https://github.com/anaisnisimov/AppSpotify#readme",
+  "dependencies": {}
 }
