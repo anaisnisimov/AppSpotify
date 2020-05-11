@@ -23,8 +23,9 @@ const Search = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     setLoading({ loading: true });
-
+   
     const getApiData = async token => {
+     
       const res = await Axios.get(`https://api.spotify.com/v1/search?&type=track,artist`, {
         params: {
           q:`${searchTerm}`
@@ -34,17 +35,40 @@ const Search = () => {
           Authorization: `Bearer ${token}`,
         },
       })
-      console.log("ma reponse api track est",res);
+      const id = idArtistFilter();
+      console.log("dans mon premier apel api, mon id artist est", id);
+      console.log("ma reponse api track est",res, "et un de mes id est ",res.data.tracks.items[0].id);
       return res;
     }
 
+    
+
+    // const getApiArtist = async (token,id) => {
+    //   console.log("dans mon second appel api l'id est",id);
+    //   const resArtist = await Axios.get(`https://api.spotify.com/v1/search?&type=artist`, {
+    //     params: {
+    //       id:id,
+    //     },
+    //     headers: {
+    //       'Content-Type': 'application/json',
+    //       Authorization: `Bearer ${token}`,
+          
+          
+    //     },
+    //   })
+    //   console.log("ma reponse api artist est",resArtist);
+    //   return resArtist;
+    // }
 
       if(searchTerm !== 0) {
         setTimeout(() => {
             const FetchData = async () => {
               const token = await getToken();
               const data = await getApiData(token);
-              
+              const id=  idArtistFilter();
+              console.log("dans mon fetchData id est", id);
+              // const dataIdArtist = await getApiArtist(token, id);
+
               dispatch({
                 type: 'FETCH_DATA',
                 payload:data,
@@ -61,6 +85,13 @@ const Search = () => {
           }
 
     };
+
+    const idArtistFilter = () => {
+      state.items.map(item => {  
+        console.log("dans ma fonction, mon id artist est", item.id);
+        return item.id;
+      })
+    };
   
 
     const styleFilter = () => {
@@ -71,7 +102,7 @@ const Search = () => {
        
         if (styleDatasArray.includes(style)) {
           styles = [...styles, style];
-        } 
+        }
         return null;
       });
       return styles.length > 0 ? styles[0] : "Autres";
@@ -79,14 +110,15 @@ const Search = () => {
 
   return (
     <div id="search">
+    
       <div id="search-container">
-        <h1 id="search-h1">Search musical title from API SPOTIFY</h1>
+        <h1 id="search-h1">cherche un titre via l'api spotify</h1>
           <form>
             <label id="search-label" >
               <input
                 type="text"
                 id="search-input"
-                placeholder="search"
+                placeholder="rechercher..."
                 onChange={handleChange}
               />
           </label>
@@ -123,7 +155,7 @@ const Search = () => {
       </div>
 
       <div id="search-containerResultList">
-          <h1 id="search-h1">Ma liste de titre spotify</h1>
+          <h1 id="search-h1">Ma liste de titres spotify</h1>
       </div>    
     </div>  
     
