@@ -14,7 +14,7 @@ const Search = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [loading,setLoading] = useState(false);
   const [clicked,setClicked] = useState(false);
-
+  
   const handleChange = (e) => {
     setSearchTerm(e.target.value.toLowerCase()); 
   };
@@ -54,6 +54,7 @@ const Search = () => {
 
             FetchData();
             setLoading(false);
+            setClicked(false);
           }, 1000);
 
           }else {
@@ -61,6 +62,10 @@ const Search = () => {
           }
 
     };
+
+
+
+
 
     const handleSubmitId = (currentId,currentName) => {
     
@@ -96,9 +101,11 @@ const Search = () => {
       
     }
     FetchDataArtist(); 
-    setTimeout(() => {
-    setClicked({clicked: true});
+    const timer = setTimeout(() => {
+      setClicked(true);
   }, 2000);
+  return () => {clearTimeout(timer);
+  }
 
   }
 
@@ -107,14 +114,15 @@ const Search = () => {
     let styles = [];
     const styleSpotify = state.itemsArtists.items[0].genres;
     console.log(styleSpotify);
-    styleSpotify.map(style => {
-     
-      if (styleDatasArray.includes(style)) {
-        styles = [...styles, style];
-      }
-      return null;
-    });
-    return styles.length > 0 ? styles[0] : "Autres";
+      styleSpotify.map(style => {
+       
+        if (styleDatasArray.includes(style)) {
+          styles = [...styles, style];
+        }
+        return null;
+      });
+      return styles.length > 0 ? styles[0] : "Autres";
+    
   };
   
 
@@ -168,7 +176,7 @@ const Search = () => {
 
       <div id="search-containerResultList">
           <h1 id="search-h1">Ma liste de titres spotify</h1>
-          { clicked ? 
+          { clicked && !loading ? 
           <div>
             
           <p id="search-paragraph">Genre : <span id="search-spanParagraph">{styleFilter()}</span></p> 
