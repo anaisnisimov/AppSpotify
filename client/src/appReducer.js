@@ -11,6 +11,7 @@ export const initialState = {items: [], itemsArtists: []};
       return {
         ...initialState,
         itemsArtists: action.payload.data.artists
+
       };
     default:
       throw new Error();

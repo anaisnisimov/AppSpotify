@@ -8,4 +8,3 @@ export const getToken = async () => {
   })
   return res.data.body;
 }
-  
