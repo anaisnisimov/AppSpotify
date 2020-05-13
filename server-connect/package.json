@@ -18,9 +18,15 @@
   },
   "homepage": "https://github.com/anaisnisimov/AppSpotify#readme",
   "dependencies": {
+    "@bearer/node": "^2.2.0",
     "axios": "^0.19.2",
     "cors": "^2.8.5",
     "express": "^4.17.1",
-    "query-string": "^6.12.1"
+    "fs": "0.0.1-security",
+    "googleapis": "^50.0.0",
+    "open": "^7.0.3",
+    "path": "^0.12.7",
+    "query-string": "^6.12.1",
+    "react-google-sheets": "^0.4.0"
   }
 }

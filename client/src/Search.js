@@ -1,5 +1,5 @@
 // == Import : npm
-import React, { useState, useReducer,useEffect } from "react";
+import React, { useState, useReducer} from "react";
 import { getToken} from './appMiddleware';
 import { reducer } from './appReducer';
 import { initialState } from './appReducer';
@@ -15,6 +15,7 @@ const Search = () => {
   const [loading,setLoading] = useState(false);
   const [clicked,setClicked] = useState(false);
   const [arrayTracks,setarrayTracks] = useState([ { id: 0, value: "" }]);
+ 
 
   const handleChange = (e) => {
     setSearchTerm(e.target.value.toLowerCase()); 
@@ -69,13 +70,7 @@ const Search = () => {
 
 
     const handleSubmitId = (currentId,currentName, currentNameArtist,currentCoverLinkTrack,currentDate,currentSpotifyLink,currentSpotifyTrackId) => {
-      // item.artists[0].id,
-      // item.name,
-      // item.artists[0].name,
-      // item.album.images[0].url,
-      // item.album.release_date,
-      // item.external_urls.spotify,
-      // item.id,
+     
       const id = currentId;
       const name = currentName;
       const artist = currentNameArtist;
@@ -159,13 +154,32 @@ const Search = () => {
       return styles.length > 0 ? styles[0] : "Autres";
   };
 
+  //googlesheet part
+
   
+  const handleSubmitGoogleSheet= () => {
+    console.log('je clique pour envoyer des données à mon serveur');
+    let payload = 
+      [["firstname", "lastname"], ["Gaspard", "TheKing"]]
+    ;
+
+     Axios.post('http://localhost:5000/', {
+      data: payload
+      })
+      .then(function (response){
+        console.log('yes le serveur receptionne',response);
+      })
+      .catch(function(error){
+        console.log('et nope', error);
+      });
+
+  }
 
 
 
   return (
     <div id="search">
-    
+    <button onClick={handleSubmitGoogleSheet}>Mettre à jour dans GoogleSheet</button>
       <div id="search-container">
         <h1 id="search-h1">cherche un titre via l'api spotify</h1>
           <form>
@@ -236,10 +250,9 @@ const Search = () => {
             )}
           
             <p id="search-paragraph">Genre : <span id="search-spanParagraph">{styleFilter()}</span></p> 
-            
-           
+              
             </div>    
-         : <p>en attente d'un click</p> }
+         : <p>en attente d'un choix de morceau</p> }
         </div>
     </div>  
     
