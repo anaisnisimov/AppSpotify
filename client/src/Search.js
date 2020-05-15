@@ -4,17 +4,22 @@ import { getToken} from './appMiddleware';
 import { reducer } from './appReducer';
 import { initialState } from './appReducer';
 import {styleDatas}  from './styleDatas';
-
+import styled  from "styled-components"
 
 import Axios from 'axios';
 import './search.scss';
+ 
+const H1 = styled.h1`
+  color: 'red';
+`;
 
 const Search = () => {
   const [state,dispatch]=useReducer(reducer,initialState);
   const [searchTerm, setSearchTerm] = useState('');
   const [loading,setLoading] = useState(false);
   const [clicked,setClicked] = useState(false);
-  const [arrayTracks,setarrayTracks] = useState([ { id: 0, value: "" }]);
+  const [opened,setOpened] = useState(false);
+  const [arrayTracks,setarrayTracks] = useState([]);
  
 
   const handleChange = (e) => {
@@ -57,7 +62,7 @@ const Search = () => {
             FetchData();
             setLoading(false);
             setClicked(false);
-          }, 1000);
+          }, 2000);
 
           }else {
             console.log('en attente d\'une recherche');
@@ -72,116 +77,125 @@ const Search = () => {
     const handleSubmitId = (currentId,currentName, currentNameArtist,currentCoverLinkTrack,currentDate,currentSpotifyLink,currentSpotifyTrackId) => {
      
       const id = currentId;
-      const name = currentName;
-      const artist = currentNameArtist;
-      const cover = currentCoverLinkTrack;
+      const title = currentName;
+      const author = currentNameArtist;
+      const spotifyCoverLink = currentCoverLinkTrack;
       const year = currentDate;
-      const linkSpoti = currentSpotifyLink; 
-      const trackid = currentSpotifyTrackId;
-
-     
-        const allDataArray = [
-          { id},
-          { name},
-          { artist},
-          { cover},
-          { year},
-          { linkSpoti},
-          { trackid},
-        ];
-     console.log("mon tableau de données lié au morceau est : ", allDataArray);
-      console.log("AU CLICK !mon id artist est", id, "mon nom artist est",name);
-      
-    
+      const spotifyLink = currentSpotifyLink; 
+      const spotifyTrackId = currentSpotifyTrackId;
 
 
-    const getApiArtist = async (token,id,name) => {
-      const resArtist = await Axios.get(`https://api.spotify.com/v1/search?&type=artist`, {
-        params: {
-          q:`${name}`,
-          
-          id:id,
-        },
+    const getApiArtist = async (token,id,) => {
+      console.log("mon id",id);
+      const resArtist = await Axios.get(`	https://api.spotify.com/v1/artists/${id}`, {
+       
         headers: {
-          'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
       })
-      console.log("ma reponse api artist est",resArtist);
-      return resArtist;
+      console.log("ma reponse api artist est",resArtist.data.genres);
+      return resArtist.data.genres;
     }
 
     
     const FetchDataArtist = async () => {
       const token = await getToken();
-      const dataIdArtist = await getApiArtist(token,id,name);
-      dispatch({
-        type: 'FETCH_DATA_ARTIST',
-        payload:dataIdArtist,
-      })
-      
+      const genreArtist = await getApiArtist(token,id);
+      const genreArtistFilter = styleFilter(genreArtist);
+      console.log(genreArtistFilter);
+      const style = genreArtistFilter;
+
+      const arrayTrack = [
+        {title},
+        {author},
+        {style},
+        {year},
+        {spotifyLink},
+        {spotifyCoverLink},
+        {spotifyTrackId},
+      ];
+      console.log('tableau arr  ytrack est ', arrayTrack);
+     setarrayTracks(arrayTrack);
     }
-    
     FetchDataArtist(); 
-    setarrayTracks(allDataArray);
-   
-  
-    const timer = setTimeout(() => {
-      setClicked(true);
-      setLoading(false);
-
-
-  }, 2000);
-  return () => {clearTimeout(timer);
-  }
-
+    setLoading(false);
+    setClicked(true)
   }
 
 
 
-  const styleFilter = () => {
+  const styleFilter = (genreArtist) => {
     const styleDatasArray = styleDatas.map(styleData => styleData.value);
     let styles = [];
-    const styleSpotify = state.itemsArtists.items[0].genres;
-    // console.log(styleSpotify);
+    
+
+    const styleSpotify = genreArtist;
+    // console.log("mon tableau stylespoti est",styleSpotify);
+    
+
       styleSpotify.map(style => {
-       
-        if (styleDatasArray.includes(style)) {
+        
+        if (styleDatasArray.includes(style) ) {
           styles = [...styles, style];
         }
         return null;
       });
+   
       return styles.length > 0 ? styles[0] : "Autres";
   };
+
+//confirm 
+const handleConfirmSubmit = (e) => {
+e.preventDefault();
+setOpened(true);
+}
+
+//cancel
+//confirm 
+const handleCancelSubmit = (e) => {
+  e.preventDefault();
+  setOpened(false);
+  }
 
   //googlesheet part
 
   
   const handleSubmitGoogleSheet= () => {
-    console.log('je clique pour envoyer des données à mon serveur');
-    let payload = 
-      [["firstname", "lastname"], ["Gaspard", "TheKing"]]
-    ;
+    
+   
+    console.log(arrayTracks);
+   
+    const finalArray = arrayTracks.map(item => Object.values(item).join(''));
+    console.log("ma ligne de code qui remet en question tout un code : ",finalArray);
+    let dataFinal = [];
+    dataFinal.push(finalArray);
 
+    let payload = dataFinal;
+    console.log('je clique pour envoyer des données à mon serveur', payload);
+
+   
      Axios.post('http://localhost:5000/', {
-      data: payload
+      data:  dataFinal
       })
       .then(function (response){
         console.log('yes le serveur receptionne',response);
+        alert("Le document googleSheet a bien était mit à jour");
       })
       .catch(function(error){
         console.log('et nope', error);
       });
+      setOpened(false);
 
   }
+
+console.log(arrayTracks);
 
 
 
   return (
     <div id="search">
-    <button onClick={handleSubmitGoogleSheet}>Mettre à jour dans GoogleSheet</button>
       <div id="search-container">
-        <h1 id="search-h1">cherche un titre via l'api spotify</h1>
+        <H1 >cherche un titre via l'api spotify</H1>
           <form>
             <label id="search-label" >
               <input
@@ -233,26 +247,40 @@ const Search = () => {
 
       <div id="search-containerResultList">
           <h1 id="search-h1">Ma liste de titres spotify</h1>
-          { clicked && !loading ? 
-            <div>
-        
-            {arrayTracks.map((track, key)=>
-            <div key={key}>
-              <p id="search-paragraph" >  {track.name} </p>
-              <p id="search-paragraph" >  {track.artist}  </p>
-              <p id="search-paragraph" >  {track.year} </p>
-              <p id="search-paragraph" >   {track.linkSpoti} </p>
-              <p id="search-paragraph" >  {track.cover} </p>
-              <p id="search-paragraph" >  {track.trackid} </p>
-           
-          
+          {  clicked && !loading  && arrayTracks && arrayTracks.length > 0 ? 
+            <div id="search-containerInformations">
+        { opened ? 
+        <div id="search-confirmSend">
+                  <h3 id= "search-h3">Êtes-vous sûr de vouloir ajouter ces informations à googleSheet ?</h3>
+                  <div id ="search-containerButtonChoice">
+                    <button id="search-cancel"onClick={handleCancelSubmit}>Annuler</button> 
+                    <button id="search-valid" onClick={handleSubmitGoogleSheet}>Confirmer</button> 
+                  </div>
+                </div>
+      : null }
+            <div id="search-containerInformationsClicked" >
+              <div id= "search-containerCover">
+            <img  id="search-cover" src={`${arrayTracks[5].spotifyCoverLink}`} alt=""></img>
+              </div>
+                <div id= "search-containerInfosToUpdate">
+                  <p id="search-paragraph" >Titre : <span id="search-spanParagraph"> {arrayTracks[0].title} </span></p>
+                  <p id="search-paragraph" >Artist : <span id="search-spanParagraph"> {arrayTracks[1].author} </span> </p>
+                  <p id="search-paragraph" >Genre :  <span id="search-spanParagraph"> {arrayTracks[2].style} </span> </p>
+                  <p id="search-paragraph" >Date :  <span id="search-spanParagraph"> {arrayTracks[3].year} </span></p>
+                  <p id="search-paragraph" >SpotifyLink :  <span id="search-spanParagraph"> {arrayTracks[4].spotifyLink}</span> </p>
+                  <p id="search-paragraph" >SpotifyCoverLinkTrack :  <span id="search-spanParagraph"> {arrayTracks[5].spotifyCoverLink}</span> </p>
+                  <p id="search-paragraph" >SpotifyTrackId :  <span id="search-spanParagraph"> {arrayTracks[6].spotifyTrackId} </span></p>
+              </div>
+            <button id="search-updateGoogleSheet" onClick={handleConfirmSubmit}>Mettre à jour dans GoogleSheet</button>
+            {/* <button id="search-updateGoogleSheet" onClick={handleSubmitGoogleSheet}>Mettre à jour dans GoogleSheet</button> */}
+
            </div>
-            )}
-          
-            <p id="search-paragraph">Genre : <span id="search-spanParagraph">{styleFilter()}</span></p> 
-              
+           
+           
+            
+
             </div>    
-         : <p>en attente d'un choix de morceau</p> }
+         : null }
         </div>
     </div>  
     

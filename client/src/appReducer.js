@@ -10,7 +10,7 @@ export const initialState = {items: [], itemsArtists: []};
       case 'FETCH_DATA_ARTIST':
       return {
         ...initialState,
-        itemsArtists: action.payload.data.artists
+        itemsArtists: action.payload.genreArtist
 
       };
     default:
