@@ -48,7 +48,7 @@ const Search = () => {
     }
 
       if(searchTerm !== 0) {
-        setTimeout(() => {
+        // setTimeout(() => {
             const FetchData = async () => {
               const token = await getToken();
               const data = await getApiData(token);
@@ -62,7 +62,7 @@ const Search = () => {
             FetchData();
             setLoading(false);
             setClicked(false);
-          }, 2000);
+          // }, 2000);
 
           }else {
             console.log('en attente d\'une recherche');
@@ -179,7 +179,7 @@ const handleCancelSubmit = (e) => {
       })
       .then(function (response){
         console.log('yes le serveur receptionne',response);
-        alert("Le document googleSheet a bien était mit à jour");
+        // alert("Le document googleSheet a bien était mit à jour");
       })
       .catch(function(error){
         console.log('et nope', error);
@@ -249,7 +249,7 @@ console.log(arrayTracks);
           <h1 id="search-h1">Ma liste de titres spotify</h1>
           {  clicked && !loading  && arrayTracks && arrayTracks.length > 0 ? 
             <div id="search-containerInformations">
-        { opened ? 
+        {/* { opened ? 
         <div id="search-confirmSend">
                   <h3 id= "search-h3">Êtes-vous sûr de vouloir ajouter ces informations à googleSheet ?</h3>
                   <div id ="search-containerButtonChoice">
@@ -257,8 +257,9 @@ console.log(arrayTracks);
                     <button id="search-valid" onClick={handleSubmitGoogleSheet}>Confirmer</button> 
                   </div>
                 </div>
-      : null }
+      : null } */}
             <div id="search-containerInformationsClicked" >
+            <button id="search-updateGoogleSheet" onClick={handleSubmitGoogleSheet}>Mettre à jour dans GoogleSheet</button>
               <div id= "search-containerCover">
             <img  id="search-cover" src={`${arrayTracks[5].spotifyCoverLink}`} alt=""></img>
               </div>
@@ -271,8 +272,7 @@ console.log(arrayTracks);
                   <p id="search-paragraph" >SpotifyCoverLinkTrack :  <span id="search-spanParagraph"> {arrayTracks[5].spotifyCoverLink}</span> </p>
                   <p id="search-paragraph" >SpotifyTrackId :  <span id="search-spanParagraph"> {arrayTracks[6].spotifyTrackId} </span></p>
               </div>
-            <button id="search-updateGoogleSheet" onClick={handleConfirmSubmit}>Mettre à jour dans GoogleSheet</button>
-            {/* <button id="search-updateGoogleSheet" onClick={handleSubmitGoogleSheet}>Mettre à jour dans GoogleSheet</button> */}
+            {/* <button id="search-updateGoogleSheet" onClick={handleConfirmSubmit}>Mettre à jour dans GoogleSheet</button> */}
 
            </div>
            

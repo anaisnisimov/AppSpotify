@@ -31,9 +31,9 @@ const data =  req.body.data
 
 // 4. Send data with a POST request
     gsheet.auth('ae8c3120-9510-11ea-b789-e3992aebbe8b')
-    .post(`${spreadsheetId}/values/A1:B1:append`, {
+    .post(`${spreadsheetId}/values/A2:append`, {
     body: { values: data },
-    query: { valueInputOption: 'RAW' }
+    query: {  valueInputOption: 'RAW' }
     }).then(() => { 
         console.log('Saved!') 
         const responseObj = {
